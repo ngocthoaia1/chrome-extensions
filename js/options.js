@@ -1,3 +1,4 @@
+// Saves options to chrome.storage
 function save_options() {
   var isHideIframe = document.getElementById('hide-iframe').checked;
   var isHideElements = document.getElementById('hide-element-checkbox').checked;
@@ -20,17 +21,33 @@ function restore_options() {
   }, function(items) {
     document.getElementById('hide-iframe').checked = items.isHideIframe;
     document.getElementById('hide-element-checkbox').checked = items.isHideElements;
+    restoreHideElementOptions(items.hideElements.domains, items.hideElements.elementTags)
   });
 }
 
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('hide-iframe').addEventListener('click',
     save_options);
+$('#hide-element-checkbox').click(save_options);
 
-document.getElementById('hide-element-checkbox').addEventListener('click',
-  save_options);
+function restoreHideElementOptions(domains, elementTags) {
+  $form = $('.hide-element-form');
+  $form.find('.domains').map((index, e) => $(e).val(domains[index]));
+  $form.find('.element-tags').map((index, e) => $(e).val(elementTags[index]));
+}
 
-$('#hide-element-settings').click(function(e) {
-  e.preventDefault();
-  chrome.tabs.create({url: 'chrome-extension://' + chrome.runtime.id + '/html/options.html'});
-})
+$('.hide-element-submit').click(function() {
+  $form = $('.hide-element-form');
+  var domains = [];
+  var elementTags = [];
+  $form.find('.domains').map((index, e) => domains.push(e.value));
+  $form.find('.element-tags').map((index, e) => elementTags.push(e.value));
+  chrome.storage.sync.set({
+    hideElements: {
+      domains: domains,
+      elementTags: elementTags
+    }
+  }, function() {
+    // Update status to let user know options were saved.
+  });
+});
