@@ -1,9 +1,13 @@
 function save_options() {
   var isHideIframe = document.getElementById('hide-iframe').checked;
   var isHideElements = document.getElementById('hide-element-checkbox').checked;
+  var isUseGithub = document.getElementById('github-checkbox').checked;
+  var isAddReferenceTask = document.getElementById('github-task-title-checkbox').checked;
   chrome.storage.sync.set({
     isHideIframe: isHideIframe,
-    isHideElements: isHideElements
+    isHideElements: isHideElements,
+    isUseGithub: isUseGithub,
+    isAddReferenceTask: isAddReferenceTask
   }, function() {
     // Update status to let user know options were saved.
   });
@@ -16,10 +20,14 @@ function restore_options() {
   chrome.storage.sync.get({
     isHideIframe: true,
     isHideElements: true,
-    hideElements: true
+    hideElements: true,
+    isUseGithub: true,
+    isAddReferenceTask: true
   }, function(items) {
     document.getElementById('hide-iframe').checked = items.isHideIframe;
     document.getElementById('hide-element-checkbox').checked = items.isHideElements;
+    document.getElementById('github-checkbox').checked = items.isUseGithub;
+    document.getElementById('github-task-title-checkbox').checked = items.isAddReferenceTask;
   });
 }
 
@@ -30,7 +38,13 @@ document.getElementById('hide-iframe').addEventListener('click',
 document.getElementById('hide-element-checkbox').addEventListener('click',
   save_options);
 
-$('#hide-element-settings').click(function(e) {
+document.getElementById('github-checkbox').addEventListener('click',
+  save_options);
+
+document.getElementById('github-task-title-checkbox').addEventListener('click',
+  save_options);
+
+$('.settings-details').click(function(e) {
   e.preventDefault();
   chrome.tabs.create({url: 'chrome-extension://' + chrome.runtime.id + '/html/options.html'});
 })

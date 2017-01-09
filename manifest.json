@@ -15,6 +15,12 @@
         "js/hide-elements.js"
       ],
       "css": ["css/hide-iframe.css"]
+    },
+    {
+      "matches": [
+        "https://github.com/*",
+        "http://github.com/*"],
+      "js": ["js/github.js"]
     }
   ],
   "permissions": [
