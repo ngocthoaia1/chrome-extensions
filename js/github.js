@@ -1,22 +1,39 @@
 $(function() {
   chrome.storage.sync.get({
     isUseGithub: true,
-    isAddReferenceTask: true
+    isAddReferenceTask: true,
+    isHideJenkinsComments: true
   }, function(items) {
     if (items.isUseGithub) {
       if (items.isAddReferenceTask) {
         $(".tabnav.tabnav-pr").on("click", "a", function() {
-          $.each([0, 1, 2, 3], function(index, val) {
-            setTimeout(setPullRequestTask, val * 1000);
-          })
+          repeatWorks(setPullRequestTask);
         })
-        $.each([0, 1, 2, 3], function(index, val) {
-          setTimeout(setPullRequestTask, val * 1000);
-        });
+        repeatWorks(setPullRequestTask);
+      }
+
+      if (items.isHideJenkinsComments) {
+        $(".tabnav.tabnav-pr").on("click", "a", function() {
+          repeatWorks(hideJenkinsComments);
+        })
+        repeatWorks(hideJenkinsComments);
       }
     }
   });
 })
+
+function repeatWorks(work) {
+  $.each([0, 1, 2, 3], function(index, val) {
+    setTimeout(work, val * 1000);
+  });
+}
+
+function hideJenkinsComments() {
+  $("a[href='/temona-jenkins']").each(function(index, e) {
+    $(e).parents('.timeline-comment-wrapper.discussion-item-review').remove();
+    $(e).parents('.inline-comments.js-inline-comments-container').remove();
+  })
+}
 
 function setPullRequestTask() {
   if ($('.backlog-id').length > 0) {return}
