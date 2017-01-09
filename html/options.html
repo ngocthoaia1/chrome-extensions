@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Popup</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style type="text/css">
+      body {
+        width: 200px;
+        padding-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h4>Các tùy chọn</h4>
+      <div class="form-group">
+        1. <input id="hide-iframe" type="checkbox"/> Ẩn iframe
+      </div>
+      <div class="form-group hide-element-form">
+        2. <input id="hide-element-checkbox" type="checkbox"/> Ẩn phần tử
+        <div class="row">
+          <div class="col-md-4 col-sm-6">
+            Domain
+          </div>
+          <div class="col-md-4 col-sm-6">
+            Element
+          </div>
+        </div>
+        <div class="elements">
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="pull-right">
+              <button class="btn btn-default add-hide-element">Add</button>
+              <button class="btn btn-primary hide-element-submit">Change</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../js/jquery-2.1.3.js"></script>
+    <script src="../js/options.js"></script>
+  </body>
+</html>
