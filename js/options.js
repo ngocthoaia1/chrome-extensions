@@ -31,6 +31,7 @@ document.getElementById('hide-iframe').addEventListener('click',
 $('#hide-element-checkbox').click(save_options);
 
 function restoreHideElementOptions(domains, elementTags) {
+  domains.forEach(() => addHideElementForm());
   $form = $('.hide-element-form');
   $form.find('.domains').map((index, e) => $(e).val(domains[index]));
   $form.find('.element-tags').map((index, e) => $(e).val(elementTags[index]));
@@ -51,3 +52,27 @@ $('.hide-element-submit').click(function() {
     // Update status to let user know options were saved.
   });
 });
+
+function removeHideElement(e) {
+  e.preventDefault();
+  $(this).parents('.row').remove()
+}
+
+function addHideElementForm() {
+  var form = '<div class="row"><br /> \
+          <div class="col-md-4 col-sm-6">\
+            <input class="domains form-control">\
+          </div>\
+          <div class="col-md-4 col-sm-6">\
+            <textarea class="element-tags form-control"></textarea>\
+          </div>\
+          <div class="col-md-1 col-sm-1">\
+            <a href="#!" class="delete-hide-element">Remove</a>\
+          </div>\
+        </div>';
+  $('.hide-element-form').find('.elements').append(form);
+  $('.delete-hide-element').off('click');
+  $('.delete-hide-element').click(removeHideElement)
+}
+
+$('.add-hide-element').click(addHideElementForm);
