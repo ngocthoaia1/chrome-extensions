@@ -16,7 +16,8 @@
       "js": [
         "js/jquery-2.1.3.js",
         "js/inject-javascript.js"
-      ]
+      ],
+      "run_at": "document_start"
     }
   ],
   "permissions": [

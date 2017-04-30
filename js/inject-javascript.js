@@ -1,16 +1,14 @@
-$(function() {
-  chrome.storage.sync.get({
-    elements: []
-  }, function(items) {
-    elements = items.elements;
-    try {
-      executeElements(elements);
-    }
-    catch(err) {
-      console.log('hide elements errors');
-      console.log(err);
-    }
-  });
+chrome.storage.sync.get({
+  elements: []
+}, function(items) {
+  elements = items.elements;
+  try {
+    executeElements(elements);
+  }
+  catch(err) {
+    console.log('hide elements errors');
+    console.log(err);
+  }
 });
 
 function executeElements(elements) {
