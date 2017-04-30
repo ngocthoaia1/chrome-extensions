@@ -1,57 +1,92 @@
-function save_options() {
-  var isHideIframe = document.getElementById('hide-iframe').checked;
-  var isHideElements = document.getElementById('hide-element-checkbox').checked;
-  var isUseGithub = document.getElementById('github-checkbox').checked;
-  var isAddReferenceTask = document.getElementById('github-task-title-checkbox').checked;
-  var isHideJenkinsComments = document.getElementById('github-hide-jenkins-comments').checked;
+var editor = ace.edit("editor");
+function update() {
+    var shouldShow = !editor.session.getValue().length;
+    var node = editor.renderer.emptyMessageNode;
+    if (!shouldShow && node) {
+        editor.renderer.scroller.removeChild(editor.renderer.emptyMessageNode);
+        editor.renderer.emptyMessageNode = null;
+    } else if (shouldShow && !node) {
+        node = editor.renderer.emptyMessageNode = document.createElement("div");
+        node.textContent = "Nhập đoạn javascript vào đây ..."
+        node.className = "ace_invisible ace_emptyMessage"
+        node.style.padding = "0 9px"
+        editor.renderer.scroller.appendChild(node);
+    }
+}
+
+elements = [];
+
+onChangeSelectDomain = function () {
+  selectedDomain = $("#select-domain").val() || currentDomain;
+  console.log(elements);
+  for (i = 0; i < elements.length; i++) {
+    if (elements[i].domain === selectedDomain) {
+      $('#use-javascript').prop('checked', elements[i].isUsing);
+      editor.setValue(elements[i].content)
+    }
+  }
+}
+
+function init() {
+  // Use default value color = 'red' and likesColor = true.
+  chrome.storage.sync.get({
+    elements: [{domain: 'Tất cả các trang'}]
+  }, function(items) {
+    elements = items.elements;
+    selects = [];
+    foundThisDomain = false;
+    for (i = 0; i < elements.length; i++) {
+      domain = elements[i].domain;
+      if (domain === currentDomain) {
+        foundThisDomain = true;
+        option = '<option value="' + domain + '" selected>' + domain + '</option>';
+      } else {
+        option = '<option value="' + domain + '">' + domain + '</option>';
+      }
+      selects.push(option);
+    }
+    if (!foundThisDomain) {
+      option = '<option value="' + window.currentDomain + '" selected>' + window.currentDomain + '</option>';
+      elements.push({domain: currentDomain});
+      selects.push(option);
+    }
+    $('#select-domain').append(selects);
+    onChangeSelectDomain();
+  });
+}
+
+// Saves options to chrome.storage
+function saveForm() {
+  isUsing = $('#use-javascript')[0].checked;
+  foundThisDomain = false
+  for (i = 0; i < elements.length; i++) {
+    if (elements[i].domain === $("#select-domain").val()) {
+      elements[i].content = editor.session.getValue();
+      elements[i].isUsing = isUsing;
+      foundThisDomain = true
+    }
+  }
   chrome.storage.sync.set({
-    isHideIframe: isHideIframe,
-    isHideElements: isHideElements,
-    isUseGithub: isUseGithub,
-    isAddReferenceTask: isAddReferenceTask,
-    isHideJenkinsComments: isHideJenkinsComments
+    elements: elements
   }, function() {
     // Update status to let user know options were saved.
   });
 }
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
-function restore_options() {
-  // Use default value color = 'red' and likesColor = true.
-  chrome.storage.sync.get({
-    isHideIframe: true,
-    isHideElements: true,
-    hideElements: true,
-    isUseGithub: true,
-    isAddReferenceTask: true,
-    isHideJenkinsComments: true
-  }, function(items) {
-    document.getElementById('hide-iframe').checked = items.isHideIframe;
-    document.getElementById('hide-element-checkbox').checked = items.isHideElements;
-    document.getElementById('github-checkbox').checked = items.isUseGithub;
-    document.getElementById('github-task-title-checkbox').checked = items.isAddReferenceTask;
-    document.getElementById('github-hide-jenkins-comments').checked = items.isHideJenkinsComments;
-  });
-}
+currentDomain = null;
+chrome.tabs.getSelected(null, function(tab) {
+    editor.on("input", update);
+    update();
 
-document.addEventListener('DOMContentLoaded', restore_options);
-document.getElementById('hide-iframe').addEventListener('click',
-    save_options);
+    url = tab.url;
+    currentDomain = url.split("/")[0] + "//" + url.split("/")[2];
+    init();
+    $('#select-domain').on('change', onChangeSelectDomain);
+    $('#submit').click(function() {
+      saveForm();
+      var code = 'window.location.reload();';
+      chrome.tabs.executeScript(tab.id, {code: code});
+    });
+    $('#cancel').click(function() {window.close();})
 
-document.getElementById('hide-element-checkbox').addEventListener('click',
-  save_options);
-
-document.getElementById('github-checkbox').addEventListener('click',
-  save_options);
-
-document.getElementById('github-task-title-checkbox').addEventListener('click',
-  save_options);
-
-document.getElementById('github-hide-jenkins-comments').addEventListener('click',
-  save_options);
-
-$('.settings-details').click(function(e) {
-  e.preventDefault();
-  chrome.tabs.create({url: 'chrome-extension://' + chrome.runtime.id + '/html/options.html'});
-})
+});

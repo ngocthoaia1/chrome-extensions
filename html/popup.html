@@ -5,28 +5,44 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <style type="text/css">
       body {
-        width: 300px;
+        width: 600px;
+				height: 600px;
         padding-bottom: 15px;
       }
+			#editor {
+        position: absolute;
+        width: 550px;
+        height: 460px;
+    	}
+			.m-t-20 {margin-top: 20px}
+			.vertical-align-center {vertical-align: center}
+			.height-34 {height: 34px}
+			.p-t-7 {padding-top: 7px}
+			.m-t-480 {margin-top: 480px}
+			.m-l-20 {padding-left: 20px;}
+			.btn-min-with {min-width: 80px}
     </style>
   </head>
   <body>
     <div class="container">
-      <h4>Các tùy chọn</h4>
-      <div class="form-group">
-        1. <input id="hide-iframe" type="checkbox"/> Ẩn iframe
-      </div>
-      <div class="form-group">
-        2. <input id="hide-element-checkbox" type="checkbox"/> Ẩn phần tử (<a href="#!" class="settings-details">Settings</a>)
-      </div>
-
-      <div class="form-group">
-        3. <input id="github-checkbox" type="checkbox"/> Github (<a href="#!" class="settings-details">Settings</a>)
-        <br />&nbsp;&nbsp;&nbsp; <input id="github-task-title-checkbox" type="checkbox"/> Hiển thị task reference
-        <br />&nbsp;&nbsp;&nbsp; <input id="github-hide-jenkins-comments" type="checkbox"/> Ẩn Jenkins comments
-      </div>
+      <div class="row m-t-20">
+				<div class="col-xs-6">
+					<select class="form-control" id='select-domain'></select>
+				</div>
+				<div class="col-xs-6 p-t-7">
+					<input id="use-javascript" type="checkbox" checked="true"/> Nhúng Javascript cho trang này
+				</div>
+			</div>
+			<div class='row m-t-20 m-l-20'>
+				<div id="editor"></div>
+			</div>
+			<div class='row m-t-480 m-l-20'>
+				<button class='btn btn-primary btn-min-with' id='submit'>Lưu</button>
+				<button class='btn btn-default btn-min-with' id='cancel'> Hủy bỏ</button>
+			</div>
     </div>
     <script src="../js/jquery-2.1.3.js"></script>
+		<script src="../js/ace.js"></script>
     <script src="../js/popup.js"></script>
   </body>
 </html>
