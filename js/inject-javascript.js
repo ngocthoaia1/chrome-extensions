@@ -2,6 +2,9 @@ chrome.storage.sync.get({
   elements: []
 }, function(items) {
   elements = items.elements;
+  if (localStorage.getItem('showElements')) {
+    console.log(JSON.stringify(elements));
+  }
   try {
     executeElements(elements);
   }

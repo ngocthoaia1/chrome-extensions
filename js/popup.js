@@ -1,4 +1,5 @@
 var editor = ace.edit("editor");
+
 function update() {
     var shouldShow = !editor.session.getValue().length;
     var node = editor.renderer.emptyMessageNode;
