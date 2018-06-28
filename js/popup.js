@@ -17,25 +17,25 @@ function update() {
 
 elements = [];
 
-onChangeSelectDomain = function () {
-  selectedDomain = $("#select-domain").val() || currentDomain;
-  console.log(elements);
-  for (i = 0; i < elements.length; i++) {
+function onChangeSelectDomain() {
+  var selectedDomain = $("#select-domain").val() || currentDomain;
+  for (var i = 0; i < elements.length; i++) {
     if (elements[i].domain === selectedDomain) {
       $('#use-javascript').prop('checked', elements[i].isUsing);
-      editor.setValue(elements[i].content)
+      editor.setValue(elements[i].content || '')
     }
   }
 }
 
 function init() {
-  // Use default value color = 'red' and likesColor = true.
-  chrome.storage.sync.get({
-    elements: [{domain: 'Tất cả các trang'}]
-  }, function(items) {
-    elements = items.elements;
-    selects = [];
-    foundThisDomain = false;
+  getChromeStorage('elements', function(text) {
+    if (text) {
+      elements = JSON.parse(text)
+    } else {
+      elements = [{domain: 'Tất cả các trang'}]
+    }
+    var selects = [];
+    var foundThisDomain = false;
     for (i = 0; i < elements.length; i++) {
       domain = elements[i].domain;
       if (domain === currentDomain) {
@@ -53,41 +53,35 @@ function init() {
     }
     $('#select-domain').append(selects);
     onChangeSelectDomain();
-  });
+  })
 }
 
 // Saves options to chrome.storage
 function saveForm() {
   isUsing = $('#use-javascript')[0].checked;
-  foundThisDomain = false
   for (i = 0; i < elements.length; i++) {
     if (elements[i].domain === $("#select-domain").val()) {
       elements[i].content = editor.session.getValue();
       elements[i].isUsing = isUsing;
-      foundThisDomain = true
     }
   }
-  chrome.storage.sync.set({
-    elements: elements
-  }, function() {
-    // Update status to let user know options were saved.
-  });
+  console.log("elements", elements)
+  setChromeStorage("elements", JSON.stringify(elements))
 }
 
 currentDomain = null;
 chrome.tabs.getSelected(null, function(tab) {
-    editor.on("input", update);
-    update();
+  editor.on("input", update);
+  update();
 
-    url = tab.url;
-    currentDomain = url.split("/")[0] + "//" + url.split("/")[2];
-    init();
-    $('#select-domain').on('change', onChangeSelectDomain);
-    $('#submit').click(function() {
-      saveForm();
-      var code = 'window.location.reload();';
-      chrome.tabs.executeScript(tab.id, {code: code});
-    });
-    $('#cancel').click(function() {window.close();})
-
+  url = tab.url;
+  currentDomain = url.split("/")[0] + "//" + url.split("/")[2];
+  init();
+  $('#select-domain').on('change', onChangeSelectDomain);
+  $('#submit').click(function() {
+    saveForm();
+    var code = 'window.location.reload();';
+    chrome.tabs.executeScript(tab.id, {code: code});
+  });
+  $('#cancel').click(function() {window.close();})
 });

@@ -1,7 +1,9 @@
-chrome.storage.sync.get({
-  elements: []
-}, function(items) {
-  elements = items.elements;
+getChromeStorage('elements', function(text) {
+  if (text) {
+    elements = JSON.parse(text)
+  } else {
+    elements = [{domain: 'Tất cả các trang'}]
+  }
   if (localStorage.getItem('showElements')) {
     console.log(JSON.stringify(elements));
   }
@@ -15,12 +17,11 @@ chrome.storage.sync.get({
 });
 
 function executeElements(elements) {
-  var elementTags = elements.elementTags;
   elements.forEach((e, index) => {
     if (e.isUsing && (e.domain.indexOf(location.hostname) !== -1 || e.domain === 'Tất cả các trang')) {
       script = document.createElement("script");
       script.innerHTML = e.content;
-      ($("head") || $("body")).append(script);
+      document.getElementsByTagName("head")[0].appendChild(script);
     }
   });
 }
