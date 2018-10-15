@@ -22,6 +22,7 @@ function onChangeSelectDomain() {
   for (var i = 0; i < elements.length; i++) {
     if (elements[i].domain === selectedDomain) {
       $('#use-javascript').prop('checked', elements[i].isUsing);
+      $('#use-jquery').prop('checked', elements[i].isUsingJquery);
       editor.setValue(elements[i].content || '')
     }
   }
@@ -59,10 +60,12 @@ function init() {
 // Saves options to chrome.storage
 function saveForm() {
   isUsing = $('#use-javascript')[0].checked;
+  isUsingJquery = $('#use-jquery')[0].checked;
   for (i = 0; i < elements.length; i++) {
     if (elements[i].domain === $("#select-domain").val()) {
       elements[i].content = editor.session.getValue();
       elements[i].isUsing = isUsing;
+      elements[i].isUsingJquery = isUsingJquery;
     }
   }
   console.log("elements", elements)
