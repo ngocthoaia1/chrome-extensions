@@ -29,32 +29,26 @@ function onChangeSelectDomain() {
 }
 
 function init() {
-  getChromeStorage('elements', function(text) {
-    if (text) {
-      elements = JSON.parse(text)
+  elements = JSON.parse(localStorage.getItem('injectJsElements')) || [];
+  var selects = [];
+  var foundThisDomain = false;
+  for (i = 0; i < elements.length; i++) {
+    domain = elements[i].domain;
+    if (domain === currentDomain) {
+      foundThisDomain = true;
+      option = '<option value="' + domain + '" selected>' + domain + '</option>';
     } else {
-      elements = [{domain: 'Tất cả các trang'}]
+      option = '<option value="' + domain + '">' + domain + '</option>';
     }
-    var selects = [];
-    var foundThisDomain = false;
-    for (i = 0; i < elements.length; i++) {
-      domain = elements[i].domain;
-      if (domain === currentDomain) {
-        foundThisDomain = true;
-        option = '<option value="' + domain + '" selected>' + domain + '</option>';
-      } else {
-        option = '<option value="' + domain + '">' + domain + '</option>';
-      }
-      selects.push(option);
-    }
-    if (!foundThisDomain) {
-      option = '<option value="' + window.currentDomain + '" selected>' + window.currentDomain + '</option>';
-      elements.push({domain: currentDomain});
-      selects.push(option);
-    }
-    $('#select-domain').append(selects);
-    onChangeSelectDomain();
-  })
+    selects.push(option);
+  }
+  if (!foundThisDomain) {
+    option = '<option value="' + window.currentDomain + '" selected>' + window.currentDomain + '</option>';
+    elements.push({domain: currentDomain});
+    selects.push(option);
+  }
+  $('#select-domain').append(selects);
+  onChangeSelectDomain();
 }
 
 // Saves options to chrome.storage
@@ -68,8 +62,14 @@ function saveForm() {
       elements[i].isUsingJquery = isUsingJquery;
     }
   }
-  console.log("elements", elements)
-  setChromeStorage("elements", JSON.stringify(elements))
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {data: elements}, function(response) {
+      window.close();
+    });
+  });
+
+  localStorage.setItem('injectJsElements', JSON.stringify(elements))
 }
 
 currentDomain = null;
@@ -83,8 +83,6 @@ chrome.tabs.getSelected(null, function(tab) {
   $('#select-domain').on('change', onChangeSelectDomain);
   $('#submit').click(function() {
     saveForm();
-    var code = 'window.location.reload();';
-    chrome.tabs.executeScript(tab.id, {code: code});
   });
   $('#cancel').click(function() {window.close();})
 });

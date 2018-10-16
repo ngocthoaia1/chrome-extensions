@@ -1,20 +1,21 @@
 {
-  "name": "Inject javascripts to Chrome",
+  "name": "Inject javascripts to pages",
   "short_name": "Inject javascripts",
   "version": "1.1",
-  "description": "This extensions have some utils support for chrome browser. This extensions developed by NNT.",
+  "description": "This extensions can inject js to any pages in your browser. This extensions developed by NNT.",
   "browser_action": {
     "default_icon": "images/icon.png",
     "default_popup": "html/popup.html"
   },
-  "icons": { "16": "images/icon-16.png",
-           "48": "images/icon-48.png",
-          "128": "images/icon-128.png" },
+  "icons": {
+    "16": "images/icon-16.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://*/*","http://*/*"],
       "js": [
-        "js/chrome-storage-utils.js",
         "js/inject-javascript.js"
       ],
       "run_at": "document_start"

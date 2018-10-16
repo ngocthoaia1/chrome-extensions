@@ -1,22 +1,12 @@
-getChromeStorage('elements', function(text) {
-  if (text) {
-    elements = JSON.parse(text)
-  } else {
-    elements = [{domain: 'Tất cả các trang'}]
-  }
-  if (localStorage.getItem('showElements')) {
-    console.log(JSON.stringify(elements));
-  }
-  try {
-    executeElements(elements);
-  }
-  catch(err) {
-    console.log('hide elements errors');
-    console.log(err);
-  }
+chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+  var elements = request.data || [];
+  localStorage.setItem('injectJsElements', JSON.stringify(elements));
+  window.location.reload();
 });
 
-function executeElements(elements) {
+var elements = JSON.parse(localStorage.getItem('injectJsElements')) || [];
+
+function executeElements() {
   elements.forEach((e, index) => {
     if (e.isUsing && (e.domain.indexOf(location.hostname) !== -1 || e.domain === 'Tất cả các trang')) {
       if (e.isUsingJquery) {
@@ -31,3 +21,5 @@ function executeElements(elements) {
     }
   });
 }
+
+setTimeout(executeElements, 100);
