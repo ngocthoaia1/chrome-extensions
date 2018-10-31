@@ -15,3 +15,11 @@ setTimeout(enableButton, 500)
 setTimeout(enableButton, 1000)
 setTimeout(enableButton, 2000)
 ```
+
+#### downloadsach.com
+```
+style = document.createElement("style")
+style.innerHTML = ".code-block, [id^='ads'] {display: none !important;}"
+head = document.getElementsByTagName("head")[0]
+head.appendChild(style)
+```

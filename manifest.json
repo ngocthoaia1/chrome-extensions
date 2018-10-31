@@ -1,7 +1,7 @@
 {
   "name": "Inject javascripts to pages",
   "short_name": "Inject javascripts",
-  "version": "1.1",
+  "version": "1.2.1",
   "description": "This extensions can inject js to any pages in your browser. This extensions developed by NNT.",
   "browser_action": {
     "default_icon": "images/icon.png",
